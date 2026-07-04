@@ -4,6 +4,7 @@ import { initialSfen, makeSfen } from 'shogiops/sfen'
 import type { MoveOrDrop } from 'shogiops/types'
 import { makeUsi, parseUsi } from 'shogiops/util'
 import { ShogiBoard } from '../components/shogi/ShogiBoard'
+import { TreeGraph } from '../components/shogi/TreeGraph'
 import { createNode, fetchNodes, updateNodeMeta } from '../lib/api/nodes'
 import { getTree, touchTree } from '../lib/api/trees'
 import type { NodeRow, TreeRow } from '../lib/db-types'
@@ -21,6 +22,7 @@ export function TreeEditorPage() {
   const [commentDraft, setCommentDraft] = useState('')
   const [metaSaving, setMetaSaving] = useState(false)
   const [metaNotice, setMetaNotice] = useState<string | null>(null)
+  const [view, setView] = useState<'board' | 'graph'>('board')
   const busyRef = useRef(false)
 
   const nodeById = useMemo(
@@ -260,7 +262,30 @@ export function TreeEditorPage() {
           {turnLabel}の手番{position.isCheck() ? '【王手】' : ''}
         </p>
 
-        <ShogiBoard position={position} onMove={handleMove} />
+        <div className="view-toggle">
+          <button
+            type="button"
+            className={view === 'board' ? 'active' : ''}
+            aria-pressed={view === 'board'}
+            onClick={() => setView('board')}
+          >
+            盤面
+          </button>
+          <button
+            type="button"
+            className={view === 'graph' ? 'active' : ''}
+            aria-pressed={view === 'graph'}
+            onClick={() => setView('graph')}
+          >
+            樹形図
+          </button>
+        </div>
+
+        {view === 'board' ? (
+          <ShogiBoard position={position} onMove={handleMove} />
+        ) : (
+          <TreeGraph nodes={nodes} currentId={currentId} onSelect={goTo} />
+        )}
 
         {moveError && <p className="message message-error">{moveError}</p>}
 
