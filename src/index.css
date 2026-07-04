@@ -1,0 +1,252 @@
+:root {
+  --bg: #f6f1e7;
+  --card-bg: #ffffff;
+  --text: #2d2620;
+  --muted: #7a6f63;
+  --accent: #6b4423;
+  --accent-hover: #855633;
+  --border: #e0d6c6;
+  --error-text: #b3261e;
+  --error-bg: #fdeceb;
+  --notice-text: #1e6b34;
+  --notice-bg: #eef6ee;
+
+  font-family:
+    'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic UI', Meiryo,
+    system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+}
+
+/* ---- 全画面センタリング（ログイン・案内画面） ---- */
+
+.screen {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.screen-message {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--muted);
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px 28px;
+  box-shadow: rgba(0, 0, 0, 0.06) 0 4px 16px;
+}
+
+.app-title {
+  margin: 0;
+  font-size: 28px;
+  text-align: center;
+  color: var(--accent);
+}
+
+.app-subtitle {
+  margin: 4px 0 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ---- フォーム ---- */
+
+.field {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.field span {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: var(--muted);
+}
+
+.field input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+}
+
+.field input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.button-primary {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.button-primary:hover {
+  background: var(--accent-hover);
+}
+
+.button-primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.button-secondary {
+  padding: 8px 16px;
+  font-size: 14px;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.button-secondary:hover {
+  background: rgba(107, 68, 35, 0.08);
+}
+
+.link-button {
+  padding: 0;
+  font-size: inherit;
+  color: var(--accent);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.mode-switch {
+  margin: 16px 0 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.message {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin: 0 0 16px;
+}
+
+.message-error {
+  color: var(--error-text);
+  background: var(--error-bg);
+}
+
+.message-notice {
+  color: var(--notice-text);
+  background: var(--notice-bg);
+}
+
+/* ---- Supabase 設定案内 ---- */
+
+.setup-steps {
+  font-size: 14px;
+}
+
+.setup-steps ol {
+  padding-left: 20px;
+}
+
+.setup-steps li {
+  margin-bottom: 8px;
+}
+
+.setup-steps code {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-family: Consolas, ui-monospace, monospace;
+  font-size: 13px;
+}
+
+.setup-note {
+  color: var(--error-text);
+  font-size: 13px;
+}
+
+/* ---- ログイン後のアプリシェル ---- */
+
+.app-shell {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 20px;
+  background: var(--accent);
+  color: #fff;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.app-header .button-secondary {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.app-header .button-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.user-email {
+  font-size: 13px;
+  opacity: 0.9;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-main {
+  flex: 1;
+  padding: 24px 20px;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+}

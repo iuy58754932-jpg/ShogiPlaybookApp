@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" rx="20" fill="#6b4423"/>
+  <polygon points="50,10 76,24 85,90 15,90 24,24" fill="#f5e6c8"/>
+  <text x="50" y="70" font-family="serif" font-size="38" font-weight="bold" text-anchor="middle" fill="#3a2a18">定</text>
+</svg>
