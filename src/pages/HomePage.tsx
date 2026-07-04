@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../auth/auth-context'
 
@@ -33,9 +34,12 @@ export function HomePage() {
       <main className="app-main">
         {signOutError && <p className="message message-error">{signOutError}</p>}
         <p>
-          Phase 0 の雛形です。ここに定跡ツリーの一覧（Phase 2）やノートブック
-          （Phase 4）が入ります。
+          Phase 1 まで実装済みです。ここに定跡ツリーの一覧（Phase 2）や
+          ノートブック（Phase 4）が入ります。
         </p>
+        <Link to="/board" className="button-link">
+          盤面（練習）を開く
+        </Link>
       </main>
     </div>
   )

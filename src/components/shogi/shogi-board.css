@@ -1,0 +1,238 @@
+/* ---- 盤と駒 ---- */
+
+.shogi-board-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.board-with-labels {
+  display: flex;
+  flex-direction: column;
+}
+
+.col-labels {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  margin-right: 18px; /* row-labels の幅ぶん */
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.board-and-rows {
+  display: flex;
+}
+
+.row-labels {
+  width: 18px;
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.row-labels span {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.board-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  border: 2px solid #4a3418;
+  background: #f0c874;
+}
+
+.board-square {
+  position: relative;
+  aspect-ratio: 10 / 11;
+  padding: 0;
+  border: 1px solid #8a6b3f;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.board-square.selected {
+  background: rgba(59, 130, 70, 0.35);
+  /* 王手表示(.check)と同一マスになっても選択中とわかるよう、背景だけに頼らない */
+  box-shadow: inset 0 0 0 3px rgba(35, 90, 45, 0.85);
+}
+
+.board-square.last {
+  background: rgba(214, 158, 46, 0.4);
+}
+
+.board-square.check {
+  background: rgba(211, 47, 47, 0.45);
+}
+
+/* 移動先（空きマス）: 中央に点 */
+.board-square.dest::after {
+  content: '';
+  position: absolute;
+  width: 26%;
+  height: 26%;
+  border-radius: 50%;
+  background: rgba(35, 90, 45, 0.45);
+  pointer-events: none;
+}
+
+/* 移動先（駒を取る）: 枠リング */
+.board-square.dest-capture::after {
+  content: '';
+  position: absolute;
+  inset: 6%;
+  border: 3px solid rgba(35, 90, 45, 0.6);
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+.shogi-piece {
+  font-family: 'Yu Mincho', 'Hiragino Mincho ProN', 'MS Mincho', serif;
+  font-weight: 700;
+  font-size: clamp(15px, 5.2vw, 30px);
+  line-height: 1;
+  color: #17100a;
+  user-select: none;
+}
+
+.shogi-piece.gote {
+  display: inline-block;
+  transform: rotate(180deg);
+}
+
+.shogi-piece.promoted {
+  color: #b3261e;
+}
+
+/* ---- 持ち駒台 ---- */
+
+.hand-stand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 48px;
+  padding: 4px 8px;
+  background: #e9dcc2;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.hand-stand.sente {
+  justify-content: flex-end;
+}
+
+.hand-stand.sente .hand-label {
+  order: 1;
+}
+
+.hand-label {
+  font-size: 16px;
+  color: var(--text);
+}
+
+.hand-piece {
+  position: relative;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 2px 6px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hand-piece:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.hand-piece.selected {
+  background: rgba(59, 130, 70, 0.3);
+  border-color: rgba(35, 90, 45, 0.6);
+}
+
+.hand-piece .shogi-piece {
+  font-size: clamp(15px, 4.6vw, 26px);
+}
+
+.hand-count {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 999px;
+  min-width: 16px;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+}
+
+/* ---- 成り確認ダイアログ ---- */
+
+.promotion-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.promotion-dialog {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 8px 24px;
+  text-align: center;
+}
+
+.promotion-title {
+  margin: 0 0 12px;
+  font-weight: bold;
+}
+
+.promotion-choices {
+  display: flex;
+  gap: 16px;
+}
+
+.promotion-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 20px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #f0c874;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.promotion-choice .shogi-piece {
+  font-size: 34px;
+}
+
+.promotion-choice:hover {
+  border-color: var(--accent);
+}
