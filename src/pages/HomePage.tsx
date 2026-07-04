@@ -34,12 +34,16 @@ export function HomePage() {
       <main className="app-main">
         {signOutError && <p className="message message-error">{signOutError}</p>}
         <p>
-          Phase 1 まで実装済みです。ここに定跡ツリーの一覧（Phase 2）や
-          ノートブック（Phase 4）が入ります。
+          Phase 2 まで実装済みです。ノートブック（Phase 4）はこれから入ります。
         </p>
-        <Link to="/board" className="button-link">
-          盤面（練習）を開く
-        </Link>
+        <div className="home-links">
+          <Link to="/trees" className="button-link">
+            定跡ツリー
+          </Link>
+          <Link to="/board" className="button-link button-link-secondary">
+            盤面（練習）
+          </Link>
+        </div>
       </main>
     </div>
   )

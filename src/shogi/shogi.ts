@@ -1,7 +1,8 @@
+import { makeJapaneseMoveOrDrop } from 'shogiops/notation/japanese'
 import { initialSfen, parseSfen } from 'shogiops/sfen'
 import type { MoveOrDrop, Piece, Role, Square } from 'shogiops/types'
 import type { Shogi } from 'shogiops/variant/shogi'
-import { squareFile, squareRank } from 'shogiops/util'
+import { parseUsi, squareFile, squareRank } from 'shogiops/util'
 import {
   handRoles,
   pieceCanPromote,
@@ -11,6 +12,20 @@ import {
 
 export function initialPosition(): Shogi {
   return parseSfen('standard', initialSfen('standard')).unwrap()
+}
+
+/** SFEN から局面を復元する（不正な SFEN は null） */
+export function positionFromSfen(sfen: string): Shogi | null {
+  const result = parseSfen('standard', sfen)
+  return result.isOk ? result.value : null
+}
+
+/** 手の日本語表記（例 "▲７六歩"）。pos はその手を指す前の局面 */
+export function moveLabel(pos: Shogi, usi: string): string {
+  const md = parseUsi(usi)
+  if (!md) return usi
+  const mark = pos.turn === 'sente' ? '▲' : '△'
+  return mark + (makeJapaneseMoveOrDrop(pos, md) ?? usi)
 }
 
 /** clone してから指す（shogiops の play() は破壊的更新のため） */

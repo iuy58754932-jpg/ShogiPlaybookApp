@@ -289,3 +289,205 @@ body {
   font-size: 15px;
   font-weight: bold;
 }
+
+/* ---- ホームの導線 ---- */
+
+.home-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.button-link-secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.button-link-secondary:hover {
+  background: rgba(107, 68, 35, 0.08);
+}
+
+/* ---- ツリー一覧 ---- */
+
+.tree-form {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.tree-form h2 {
+  margin: 0 0 12px;
+  font-size: 17px;
+}
+
+.tree-list {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tree-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.tree-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-decoration: none;
+  color: var(--text);
+  min-width: 0;
+  flex: 1;
+}
+
+.tree-name {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.tree-description {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.tree-card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.tree-edit-form {
+  flex: 1;
+}
+
+.button-danger {
+  color: var(--error-text);
+  border-color: var(--error-text);
+}
+
+.button-danger:hover {
+  background: var(--error-bg);
+}
+
+.empty-note {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ---- ツリー編集 ---- */
+
+.editor-nav {
+  display: flex;
+  gap: 10px;
+}
+
+.editor-panel {
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.editor-panel h2 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.children-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.child-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  font-size: 15px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.child-button:hover {
+  border-color: var(--accent);
+}
+
+.child-move {
+  font-weight: bold;
+}
+
+.branch-chip {
+  font-size: 12px;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.child-more {
+  margin-left: auto;
+  color: var(--muted);
+}
+
+.editor-panel textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  font-family: inherit;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  resize: vertical;
+}
+
+.editor-panel textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.meta-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.meta-save {
+  width: auto;
+  padding: 10px 24px;
+}
+
+.meta-notice {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.meta-hint {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
