@@ -1,32 +1,40 @@
-# React + TypeScript + Vite
+# 定跡ツリー（ShogiPlaybookApp）
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+将棋の定跡・問題集アプリ（PWA）。定跡を「局面ノードを手でつないだ1つの木」として育て、
+仕掛けが成立する局面を記録し、1手当ての問題集にして反復学習する。
 
-Currently, two official plugins are available:
+詳細仕様は [docs/01_claude_code_実装指示書.md](docs/01_claude_code_実装指示書.md)（実装の正）と
+[docs/03_エンジニア向け仕様書.md](docs/03_エンジニア向け仕様書.md) を参照。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 技術スタック
 
-## React Compiler
+- React + TypeScript + Vite（PWA: vite-plugin-pwa）
+- 将棋ルール: [shogiops](https://github.com/WandererXII/shogiops)（GPL-3.0）— 合法手・SFEN/USI
+- 盤 UI: 自作（9×9 グリッド + 持ち駒台 + 樹形図 SVG）
+- バックエンド: Supabase（Postgres + Auth + RLS）
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## セットアップ
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```sh
+npm install
+copy .env.example .env   # VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY を設定
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+DB は `db/migrations/` の SQL を番号順に Supabase の SQL Editor で実行して作成する。
+
+## スクリプト
+
+| コマンド | 内容 |
+|---|---|
+| `npm run dev` | 開発サーバー |
+| `npm run build` | 型チェック + 本番ビルド（`dist/`、SW 生成込み） |
+| `npm run preview` | 本番ビルドのローカル配信 |
+| `npm run lint` | oxlint |
+
+## 注意
+
+- `vite build` は `import.meta.env.*` をビルド時に焼き込む。**本番デプロイでは
+  ホスティング側の環境変数に Supabase の URL / publishable キーを設定してからビルドすること**
+  （未設定だとアプリ本体がツリーシェイクされ「設定案内画面だけ」のバンドルになる）。
+- フロントに置いてよいのは publishable（anon）キーのみ。service_role / secret キーは厳禁。
