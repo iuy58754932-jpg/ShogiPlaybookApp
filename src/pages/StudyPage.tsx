@@ -41,6 +41,7 @@ export function StudyPage() {
   const [result, setResult] = useState<AnswerResult | null>(null)
   const [stats, setStats] = useState({ asked: 0, correct: 0, wrong: 0 })
   const [recordFailed, setRecordFailed] = useState(false)
+  const [skippedCount, setSkippedCount] = useState(0)
   const answeredRef = useRef(false)
 
   // 問題・出題ノード・関係する木のノードを読み込む
@@ -58,10 +59,26 @@ export function StudyPage() {
         const treeIds = [...new Set(nodes.map((n) => n.tree_id))]
         const treeNodeLists = await Promise.all(treeIds.map((id) => fetchNodes(id)))
         if (cancelled) return
-        setProblems(probs)
-        setNodeById(new Map(nodes.map((n) => [n.id, n])))
-        setTreeNodes(new Map(treeIds.map((id, i) => [id, treeNodeLists[i]])))
-        setQueue(shuffle(probs))
+        const nodeMap = new Map(nodes.map((n) => [n.id, n]))
+        const treeNodesMap = new Map(treeIds.map((id, i) => [id, treeNodeLists[i]]))
+        // 出題不能な問題（出題ノード消失、または「どれでも正解」なのに子が
+        // 全部削除された）は除外する — 残すと正解が存在せず演習が終わらない
+        const playable = probs.filter((p) => {
+          const n = nodeMap.get(p.node_id)
+          if (!n) return false
+          if (!p.accept_any_child) return true
+          const all = treeNodesMap.get(n.tree_id) ?? []
+          return all.some((x) => x.parent_id === n.id)
+        })
+        setSkippedCount(probs.length - playable.length)
+        if (playable.length === 0) {
+          setPhase('empty')
+          return
+        }
+        setProblems(playable)
+        setNodeById(nodeMap)
+        setTreeNodes(treeNodesMap)
+        setQueue(shuffle(playable))
         setIndex(0)
         answeredRef.current = false
         setPhase('question')
@@ -250,6 +267,12 @@ export function StudyPage() {
           </div>
         )}
 
+        {skippedCount > 0 && (
+          <p className="meta-hint">
+            ※ 出題できない問題を {skippedCount} 問スキップしました
+            （出題局面の手が木から削除された可能性があります）
+          </p>
+        )}
         {recordFailed && (
           <p className="meta-hint">
             ※ 成績の記録に失敗した解答があります（演習は続けられます）

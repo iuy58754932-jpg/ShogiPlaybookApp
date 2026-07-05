@@ -36,3 +36,21 @@ export async function deleteProblem(id: string): Promise<void> {
   const { error } = await sb.from('problems').delete().eq('id', id)
   if (error) throw error
 }
+
+/** 指定ノードを出題局面とする問題を取得（ノード削除の影響調査に使う） */
+export async function listProblemsByNode(nodeId: string): Promise<ProblemRow[]> {
+  const sb = requireSupabase()
+  const { data, error } = await sb
+    .from('problems')
+    .select('*')
+    .eq('node_id', nodeId)
+  if (error) throw error
+  return data as ProblemRow[]
+}
+
+export async function deleteProblems(ids: string[]): Promise<void> {
+  if (ids.length === 0) return
+  const sb = requireSupabase()
+  const { error } = await sb.from('problems').delete().in('id', ids)
+  if (error) throw error
+}

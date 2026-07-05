@@ -43,6 +43,13 @@ export async function createNode(input: {
   return data as NodeRow
 }
 
+/** ノードを削除する。子孫ノード・参照する問題は DB の FK カスケードで一緒に消える */
+export async function deleteNode(id: string): Promise<void> {
+  const sb = requireSupabase()
+  const { error } = await sb.from('nodes').delete().eq('id', id)
+  if (error) throw error
+}
+
 export async function updateNodeMeta(
   id: string,
   patch: { branch_label: string | null; comment: string | null },

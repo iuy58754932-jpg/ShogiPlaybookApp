@@ -5,7 +5,13 @@ import type { MoveOrDrop } from 'shogiops/types'
 import { makeUsi, parseUsi } from 'shogiops/util'
 import { ShogiBoard } from '../components/shogi/ShogiBoard'
 import { TreeGraph } from '../components/shogi/TreeGraph'
-import { createNode, fetchNodes, updateNodeMeta } from '../lib/api/nodes'
+import {
+  createNode,
+  deleteNode,
+  fetchNodes,
+  updateNodeMeta,
+} from '../lib/api/nodes'
+import { deleteProblems, listProblemsByNode } from '../lib/api/problems'
 import { getTree, touchTree } from '../lib/api/trees'
 import type { NodeRow, TreeRow } from '../lib/db-types'
 import { moveLabel, playMove, positionFromSfen } from '../shogi/shogi'
@@ -24,6 +30,11 @@ export function TreeEditorPage() {
   const [metaNotice, setMetaNotice] = useState<string | null>(null)
   const [view, setView] = useState<'board' | 'graph'>('board')
   const busyRef = useRef(false)
+  // 削除の await 中にユーザーが別ノードへ移動した場合に備え、最新の現在地を持つ
+  const currentIdRef = useRef<string | null>(null)
+  useEffect(() => {
+    currentIdRef.current = currentId
+  }, [currentId])
 
   const nodeById = useMemo(
     () => new Map(nodes.map((n) => [n.id, n])),
@@ -154,6 +165,77 @@ export function TreeEditorPage() {
   function goTo(nodeId: string) {
     flushDirtyMeta()
     setCurrentId(nodeId)
+  }
+
+  /** 現在ノードとその子孫のノード ID を集める */
+  function collectSubtreeIds(rootNodeId: string): Set<string> {
+    const ids = new Set<string>()
+    const stack = [rootNodeId]
+    while (stack.length > 0) {
+      const id = stack.pop() as string
+      ids.add(id)
+      for (const child of childrenByParent.get(id) ?? []) {
+        stack.push(child.id)
+      }
+    }
+    return ids
+  }
+
+  async function handleDeleteNode() {
+    if (!treeId || !current || !current.parent_id || busyRef.current) return
+    const subtree = collectSubtreeIds(current.id)
+    const descendants = subtree.size - 1
+    const label = currentMoveLabel ?? 'この手'
+    const parentId = current.parent_id
+    busyRef.current = true
+    setMoveError(null)
+    try {
+      // 親局面に紐づく問題のうち、この手の削除で壊れるものを調べる:
+      // ・「子ならどれでも正解」の問題は、この手が唯一の子だと正解が消滅する
+      // ・単一正解の問題は、正解の手そのものが消える場合がある
+      const siblings = childrenByParent.get(parentId) ?? []
+      const isOnlyChild = siblings.length === 1
+      let brokenProblems: string[] = []
+      try {
+        const parentProblems = await listProblemsByNode(parentId)
+        brokenProblems = parentProblems
+          .filter((p) =>
+            p.accept_any_child
+              ? isOnlyChild
+              : p.answer_move_usi === current.move_usi,
+          )
+          .map((p) => p.id)
+      } catch {
+        // 影響調査に失敗しても削除自体は続行できる（警告が出せないだけ）
+      }
+      const detail =
+        descendants > 0
+          ? `\nこの先の ${descendants} 手もまとめて削除されます。`
+          : ''
+      const problemNote =
+        brokenProblems.length > 0
+          ? `\nこの手を正解とする問題 ${brokenProblems.length} 問も削除されます。`
+          : ''
+      if (
+        !window.confirm(
+          `${label} を削除しますか？${detail}${problemNote}\nこれらの局面から作成した問題（全ノートブック）も削除されます。`,
+        )
+      ) {
+        return
+      }
+      await deleteNode(current.id)
+      await deleteProblems(brokenProblems)
+      setNodes((ns) => ns.filter((n) => !subtree.has(n.id)))
+      // await 中に別ノードへ移動していた場合はそこに留まる
+      if (!currentIdRef.current || subtree.has(currentIdRef.current)) {
+        setCurrentId(parentId)
+      }
+      void touchTree(treeId)
+    } catch {
+      setMoveError('手の削除に失敗しました。通信環境を確認してください。')
+    } finally {
+      busyRef.current = false
+    }
   }
 
   async function handleMove(md: MoveOrDrop) {
@@ -305,6 +387,14 @@ export function TreeEditorPage() {
             onClick={() => root && goTo(root.id)}
           >
             初期局面へ
+          </button>
+          <button
+            type="button"
+            className="button-secondary button-danger"
+            disabled={!parent}
+            onClick={handleDeleteNode}
+          >
+            この手を削除
           </button>
         </div>
 

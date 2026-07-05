@@ -45,9 +45,10 @@ export function buildReplaySteps(
   const last = path[path.length - 1]
   if (last.id === problemNode.id) {
     const kids = children.get(problemNode.id) ?? []
+    // 単一正解の手が木から消えている場合、別の線を正解のように再生しない
     let next = problem.accept_any_child
       ? kids[0]
-      : (kids.find((k) => k.move_usi === problem.answer_move_usi) ?? kids[0])
+      : kids.find((k) => k.move_usi === problem.answer_move_usi)
     while (next && path.length < 200) {
       path.push(next)
       next = (children.get(next.id) ?? [])[0]
