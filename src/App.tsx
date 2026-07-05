@@ -4,6 +4,7 @@ import { ProtectedRoute } from './auth/ProtectedRoute'
 import { BoardPage } from './pages/BoardPage'
 import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
+import { NotebooksPage } from './pages/NotebooksPage'
 import { SetupNotice } from './pages/SetupNotice'
 import { TreeEditorPage } from './pages/TreeEditorPage'
 import { TreesPage } from './pages/TreesPage'
@@ -23,6 +24,7 @@ function App() {
             <Route path="/board" element={<BoardPage />} />
             <Route path="/trees" element={<TreesPage />} />
             <Route path="/trees/:treeId" element={<TreeEditorPage />} />
+            <Route path="/notebooks" element={<NotebooksPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
