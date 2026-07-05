@@ -11,6 +11,17 @@ export async function listNotebooks(): Promise<NotebookRow[]> {
   return data as NotebookRow[]
 }
 
+export async function getNotebook(id: string): Promise<NotebookRow> {
+  const sb = requireSupabase()
+  const { data, error } = await sb
+    .from('notebooks')
+    .select('*')
+    .eq('id', id)
+    .single()
+  if (error) throw error
+  return data as NotebookRow
+}
+
 export async function createNotebook(
   userId: string,
   name: string,

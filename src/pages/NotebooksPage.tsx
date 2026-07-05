@@ -95,7 +95,7 @@ export function NotebooksPage() {
   async function handleDelete(notebook: NotebookRow) {
     if (
       !window.confirm(
-        `「${notebook.name}」を削除しますか？\n（Phase 5 以降でこのノートブックに問題を作った場合、それらも削除されます）`,
+        `「${notebook.name}」を削除しますか？\n中の問題と成績履歴もすべて削除されます。`,
       )
     ) {
       return
@@ -148,8 +148,8 @@ export function NotebooksPage() {
         {loading && <p className="screen-message">読み込み中…</p>}
         {!loading && notebooks.length === 0 && !error && (
           <p className="empty-note">
-            まだノートブックがありません。上のフォームから作成してください。
-            問題の作成と演習は Phase 5 で追加されます。
+            まだノートブックがありません。上のフォームから作成し、開いた先で
+            定跡ツリーの局面から問題を作成・演習できます。
           </p>
         )}
 
@@ -191,14 +191,17 @@ export function NotebooksPage() {
               </li>
             ) : (
               <li key={notebook.id} className="tree-card">
-                <div className="tree-card-main">
+                <Link
+                  to={`/notebooks/${notebook.id}`}
+                  className="tree-card-main"
+                >
                   <span className="tree-name">{notebook.name}</span>
                   {notebook.description && (
                     <span className="tree-description">
                       {notebook.description}
                     </span>
                   )}
-                </div>
+                </Link>
                 <div className="tree-card-actions">
                   <button
                     type="button"

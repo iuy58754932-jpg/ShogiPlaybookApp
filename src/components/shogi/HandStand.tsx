@@ -8,6 +8,8 @@ interface HandStandProps {
   color: Color
   selectedRole: Role | null
   onSelectRole: (color: Color, role: Role) => void
+  /** false なら閲覧専用（タップ不可） */
+  interactive?: boolean
 }
 
 export function HandStand({
@@ -15,9 +17,10 @@ export function HandStand({
   color,
   selectedRole,
   onSelectRole,
+  interactive = true,
 }: HandStandProps) {
   const hand = position.hands.color(color)
-  const isTurn = position.turn === color
+  const isTurn = position.turn === color && interactive
 
   return (
     <div className={`hand-stand ${color}`}>

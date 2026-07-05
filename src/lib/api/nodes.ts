@@ -23,6 +23,14 @@ export async function fetchNodes(treeId: string): Promise<NodeRow[]> {
   }
 }
 
+export async function fetchNodesByIds(ids: string[]): Promise<NodeRow[]> {
+  if (ids.length === 0) return []
+  const sb = requireSupabase()
+  const { data, error } = await sb.from('nodes').select('*').in('id', ids)
+  if (error) throw error
+  return data as NodeRow[]
+}
+
 export async function createNode(input: {
   tree_id: string
   parent_id: string | null

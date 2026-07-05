@@ -21,6 +21,8 @@ type Selection =
 interface ShogiBoardProps {
   position: Shogi
   onMove: (md: MoveOrDrop) => void
+  /** true なら閲覧専用（駒操作を受け付けない）。解説の局面再生などに使う */
+  readOnly?: boolean
 }
 
 const COL_LABELS = ['9', '8', '7', '6', '5', '4', '3', '2', '1']
@@ -28,7 +30,7 @@ const ROW_LABELS = ['一', '二', '三', '四', '五', '六', '七', '八', '九
 const ROWS = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 const COLS = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
-export function ShogiBoard({ position, onMove }: ShogiBoardProps) {
+export function ShogiBoard({ position, onMove, readOnly = false }: ShogiBoardProps) {
   const [selection, setSelection] = useState<Selection | null>(null)
   const [pendingPromotion, setPendingPromotion] = useState<{
     from: Square
@@ -66,7 +68,7 @@ export function ShogiBoard({ position, onMove }: ShogiBoardProps) {
   }
 
   function handleSquareClick(square: Square) {
-    if (pendingPromotion) return
+    if (readOnly || pendingPromotion) return
     if (selection?.dests.has(square)) {
       if (selection.kind === 'board') {
         playNormal(selection.square, square)
@@ -89,7 +91,7 @@ export function ShogiBoard({ position, onMove }: ShogiBoardProps) {
   }
 
   function handleHandSelect(color: Color, role: Role) {
-    if (pendingPromotion || color !== position.turn) return
+    if (readOnly || pendingPromotion || color !== position.turn) return
     if (selection?.kind === 'hand' && selection.role === role) {
       setSelection(null)
       return
@@ -110,6 +112,7 @@ export function ShogiBoard({ position, onMove }: ShogiBoardProps) {
       <HandStand
         position={position}
         color="gote"
+        interactive={!readOnly}
         selectedRole={
           selection?.kind === 'hand' && position.turn === 'gote'
             ? selection.role
@@ -163,6 +166,7 @@ export function ShogiBoard({ position, onMove }: ShogiBoardProps) {
       <HandStand
         position={position}
         color="sente"
+        interactive={!readOnly}
         selectedRole={
           selection?.kind === 'hand' && position.turn === 'sente'
             ? selection.role
