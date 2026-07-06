@@ -29,6 +29,11 @@ const NotebookDetailPage = lazy(() =>
 const ProblemNewPage = lazy(() =>
   import('./pages/ProblemNewPage').then((m) => ({ default: m.ProblemNewPage })),
 )
+const ProblemEditPage = lazy(() =>
+  import('./pages/ProblemEditPage').then((m) => ({
+    default: m.ProblemEditPage,
+  })),
+)
 const StudyPage = lazy(() =>
   import('./pages/StudyPage').then((m) => ({ default: m.StudyPage })),
 )
@@ -57,6 +62,10 @@ function App() {
               <Route
                 path="/notebooks/:notebookId/new"
                 element={<ProblemNewPage />}
+              />
+              <Route
+                path="/notebooks/:notebookId/problems/:problemId/edit"
+                element={<ProblemEditPage />}
               />
               <Route
                 path="/notebooks/:notebookId/study"

@@ -374,6 +374,12 @@ body {
   flex: 1;
 }
 
+.button-edit-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
 .button-danger {
   color: var(--error-text);
   border-color: var(--error-text);

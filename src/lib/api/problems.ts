@@ -31,6 +31,38 @@ export async function createProblem(input: {
   return data as ProblemRow
 }
 
+export async function getProblem(id: string): Promise<ProblemRow> {
+  const sb = requireSupabase()
+  const { data, error } = await sb
+    .from('problems')
+    .select('*')
+    .eq('id', id)
+    .single()
+  if (error) throw error
+  return data as ProblemRow
+}
+
+/** 正解設定・解説を更新する（出題局面 node_id は変更しない。成績履歴は保持される） */
+export async function updateProblem(
+  id: string,
+  patch: {
+    answer_move_usi: string | null
+    accept_any_child: boolean
+    explanation_text: string | null
+    explanation_from_node_id: string | null
+  },
+): Promise<ProblemRow> {
+  const sb = requireSupabase()
+  const { data, error } = await sb
+    .from('problems')
+    .update({ ...patch, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single()
+  if (error) throw error
+  return data as ProblemRow
+}
+
 export async function deleteProblem(id: string): Promise<void> {
   const sb = requireSupabase()
   const { error } = await sb.from('problems').delete().eq('id', id)

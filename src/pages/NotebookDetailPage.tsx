@@ -155,6 +155,12 @@ export function NotebookDetailPage() {
                   </span>
                 </div>
                 <div className="tree-card-actions">
+                  <Link
+                    to={`/notebooks/${notebookId}/problems/${problem.id}/edit`}
+                    className="button-secondary button-edit-link"
+                  >
+                    編集
+                  </Link>
                   <button
                     type="button"
                     className="button-secondary button-danger"
