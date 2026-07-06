@@ -29,6 +29,7 @@ export function TreeEditorPage() {
   const [metaSaving, setMetaSaving] = useState(false)
   const [metaNotice, setMetaNotice] = useState<string | null>(null)
   const [view, setView] = useState<'board' | 'graph'>('board')
+  const [orientation, setOrientation] = useState<'sente' | 'gote'>('sente')
   const busyRef = useRef(false)
   // 削除の await 中にユーザーが別ノードへ移動した場合に備え、最新の現在地を持つ
   const currentIdRef = useRef<string | null>(null)
@@ -364,7 +365,11 @@ export function TreeEditorPage() {
         </div>
 
         {view === 'board' ? (
-          <ShogiBoard position={position} onMove={handleMove} />
+          <ShogiBoard
+            position={position}
+            onMove={handleMove}
+            orientation={orientation}
+          />
         ) : (
           <TreeGraph nodes={nodes} currentId={currentId} onSelect={goTo} />
         )}
@@ -387,6 +392,15 @@ export function TreeEditorPage() {
             onClick={() => root && goTo(root.id)}
           >
             初期局面へ
+          </button>
+          <button
+            type="button"
+            className="button-secondary"
+            onClick={() =>
+              setOrientation((o) => (o === 'sente' ? 'gote' : 'sente'))
+            }
+          >
+            盤を反転
           </button>
           <button
             type="button"

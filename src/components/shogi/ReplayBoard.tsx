@@ -1,11 +1,18 @@
 import { useMemo, useState } from 'react'
+import type { Color } from 'shogiops/types'
 import { parseUsi } from 'shogiops/util'
 import type { ReplayStep } from '../../shogi/replay'
 import { positionFromSfen } from '../../shogi/shogi'
 import { ShogiBoard } from './ShogiBoard'
 
 /** 解説用のミニ盤: 経路を1手ずつ進めて/戻して眺める */
-export function ReplayBoard({ steps }: { steps: ReplayStep[] }) {
+export function ReplayBoard({
+  steps,
+  orientation = 'sente',
+}: {
+  steps: ReplayStep[]
+  orientation?: Color
+}) {
   const [index, setIndex] = useState(0)
 
   const position = useMemo(() => {
@@ -23,7 +30,12 @@ export function ReplayBoard({ steps }: { steps: ReplayStep[] }) {
 
   return (
     <div className="replay-board">
-      <ShogiBoard position={position} onMove={() => {}} readOnly />
+      <ShogiBoard
+        position={position}
+        onMove={() => {}}
+        readOnly
+        orientation={orientation}
+      />
       <div className="replay-controls">
         <button
           type="button"

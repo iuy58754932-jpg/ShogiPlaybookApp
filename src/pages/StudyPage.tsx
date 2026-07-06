@@ -110,6 +110,9 @@ export function StudyPage() {
     return all.filter((n) => n.parent_id === node.id)
   }, [node, treeNodes])
 
+  // 解答者（出題局面の手番側）が手前になる向きで出題する
+  const orientation = position?.turn ?? 'sente'
+
   const replaySteps: ReplayStep[] | null = useMemo(() => {
     if (!problem || !node || phase !== 'result') return null
     const all = treeNodes.get(node.tree_id)
@@ -205,7 +208,11 @@ export function StudyPage() {
             </p>
 
             {phase === 'question' ? (
-              <ShogiBoard position={position} onMove={handleAnswer} />
+              <ShogiBoard
+                position={position}
+                onMove={handleAnswer}
+                orientation={orientation}
+              />
             ) : (
               result && (
                 <div className="study-result">
@@ -226,9 +233,14 @@ export function StudyPage() {
                     <p className="study-explanation">{problem.explanation_text}</p>
                   )}
                   {replaySteps && replaySteps.length > 0 ? (
-                    <ReplayBoard steps={replaySteps} />
+                    <ReplayBoard steps={replaySteps} orientation={orientation} />
                   ) : (
-                    <ShogiBoard position={position} onMove={() => {}} readOnly />
+                    <ShogiBoard
+                      position={position}
+                      onMove={() => {}}
+                      readOnly
+                      orientation={orientation}
+                    />
                   )}
                   <button
                     type="button"

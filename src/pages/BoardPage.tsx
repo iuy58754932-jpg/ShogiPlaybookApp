@@ -24,6 +24,7 @@ function outcomeLabel(outcome: Outcome): string {
 
 export function BoardPage() {
   const [position, setPosition] = useState<Shogi>(() => initialPosition())
+  const [orientation, setOrientation] = useState<'sente' | 'gote'>('sente')
 
   const outcome = position.outcome()
   const inCheck = position.isCheck()
@@ -54,10 +55,25 @@ export function BoardPage() {
                 inCheck ? '【王手】' : ''
               }`}
         </p>
-        <ShogiBoard position={position} onMove={handleMove} />
-        <button type="button" className="button-secondary" onClick={reset}>
-          初期局面に戻す
-        </button>
+        <ShogiBoard
+          position={position}
+          onMove={handleMove}
+          orientation={orientation}
+        />
+        <div className="editor-nav">
+          <button
+            type="button"
+            className="button-secondary"
+            onClick={() =>
+              setOrientation((o) => (o === 'sente' ? 'gote' : 'sente'))
+            }
+          >
+            盤を反転
+          </button>
+          <button type="button" className="button-secondary" onClick={reset}>
+            初期局面に戻す
+          </button>
+        </div>
       </main>
     </div>
   )

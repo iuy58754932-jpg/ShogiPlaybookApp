@@ -23,14 +23,23 @@ interface ShogiBoardProps {
   onMove: (md: MoveOrDrop) => void
   /** true なら閲覧専用（駒操作を受け付けない）。解説の局面再生などに使う */
   readOnly?: boolean
+  /** 手前にする側。'gote' で盤を 180 度回転した後手視点になる */
+  orientation?: Color
 }
 
-const COL_LABELS = ['9', '8', '7', '6', '5', '4', '3', '2', '1']
-const ROW_LABELS = ['一', '二', '三', '四', '五', '六', '七', '八', '九']
+const COL_LABELS_SENTE = ['9', '8', '7', '6', '5', '4', '3', '2', '1']
+const COL_LABELS_GOTE = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+const ROW_LABELS_SENTE = ['一', '二', '三', '四', '五', '六', '七', '八', '九']
+const ROW_LABELS_GOTE = ['九', '八', '七', '六', '五', '四', '三', '二', '一']
 const ROWS = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 const COLS = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
-export function ShogiBoard({ position, onMove, readOnly = false }: ShogiBoardProps) {
+export function ShogiBoard({
+  position,
+  onMove,
+  readOnly = false,
+  orientation = 'sente',
+}: ShogiBoardProps) {
   const [selection, setSelection] = useState<Selection | null>(null)
   const [pendingPromotion, setPendingPromotion] = useState<{
     from: Square
@@ -107,14 +116,21 @@ export function ShogiBoard({ position, onMove, readOnly = false }: ShogiBoardPro
     setSelection(null)
   }
 
+  const farColor: Color = orientation === 'sente' ? 'gote' : 'sente'
+  const nearColor: Color = orientation
+  const colLabels = orientation === 'sente' ? COL_LABELS_SENTE : COL_LABELS_GOTE
+  const rowLabels = orientation === 'sente' ? ROW_LABELS_SENTE : ROW_LABELS_GOTE
+
   return (
-    <div className="shogi-board-wrap">
+    <div
+      className={`shogi-board-wrap${orientation === 'gote' ? ' board-flipped' : ''}`}
+    >
       <HandStand
         position={position}
-        color="gote"
+        color={farColor}
         interactive={!readOnly}
         selectedRole={
-          selection?.kind === 'hand' && position.turn === 'gote'
+          selection?.kind === 'hand' && position.turn === farColor
             ? selection.role
             : null
         }
@@ -123,7 +139,7 @@ export function ShogiBoard({ position, onMove, readOnly = false }: ShogiBoardPro
 
       <div className="board-with-labels">
         <div className="col-labels">
-          {COL_LABELS.map((label) => (
+          {colLabels.map((label) => (
             <span key={label}>{label}</span>
           ))}
         </div>
@@ -131,7 +147,7 @@ export function ShogiBoard({ position, onMove, readOnly = false }: ShogiBoardPro
           <div className="board-grid">
             {ROWS.map((row) =>
               COLS.map((col) => {
-                const square = squareAt(col, row)
+                const square = squareAt(col, row, orientation)
                 const piece = position.board.get(square)
                 const isDest = selection?.dests.has(square) ?? false
                 const classes = ['board-square']
@@ -156,7 +172,7 @@ export function ShogiBoard({ position, onMove, readOnly = false }: ShogiBoardPro
             )}
           </div>
           <div className="row-labels">
-            {ROW_LABELS.map((label) => (
+            {rowLabels.map((label) => (
               <span key={label}>{label}</span>
             ))}
           </div>
@@ -165,10 +181,10 @@ export function ShogiBoard({ position, onMove, readOnly = false }: ShogiBoardPro
 
       <HandStand
         position={position}
-        color="sente"
+        color={nearColor}
         interactive={!readOnly}
         selectedRole={
-          selection?.kind === 'hand' && position.turn === 'sente'
+          selection?.kind === 'hand' && position.turn === nearColor
             ? selection.role
             : null
         }

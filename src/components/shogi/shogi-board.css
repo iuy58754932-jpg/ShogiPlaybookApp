@@ -112,6 +112,16 @@
   transform: rotate(180deg);
 }
 
+/* 後手視点（盤反転）: 回転が入れ替わる */
+.board-flipped .shogi-piece.gote {
+  transform: none;
+}
+
+.board-flipped .shogi-piece.sente {
+  display: inline-block;
+  transform: rotate(180deg);
+}
+
 .shogi-piece.promoted {
   color: #b3261e;
 }
@@ -130,11 +140,29 @@
   border-radius: 8px;
 }
 
+/* 持ち駒台の寄せは「画面位置」基準: 手前（下）= 右寄せ、奥（上）= 左寄せ。
+   通常は下=先手だが、盤反転時は下=後手になるため色ごとの寄せを入れ替える */
 .hand-stand.sente {
   justify-content: flex-end;
 }
 
 .hand-stand.sente .hand-label {
+  order: 1;
+}
+
+.board-flipped .hand-stand.sente {
+  justify-content: flex-start;
+}
+
+.board-flipped .hand-stand.sente .hand-label {
+  order: 0;
+}
+
+.board-flipped .hand-stand.gote {
+  justify-content: flex-end;
+}
+
+.board-flipped .hand-stand.gote .hand-label {
   order: 1;
 }
 

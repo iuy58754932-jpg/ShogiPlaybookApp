@@ -1,6 +1,6 @@
 import { makeJapaneseMoveOrDrop } from 'shogiops/notation/japanese'
 import { initialSfen, parseSfen } from 'shogiops/sfen'
-import type { MoveOrDrop, Piece, Role, Square } from 'shogiops/types'
+import type { Color, MoveOrDrop, Piece, Role, Square } from 'shogiops/types'
 import type { Shogi } from 'shogiops/variant/shogi'
 import { parseUsi, squareFile, squareRank } from 'shogiops/util'
 import {
@@ -35,12 +35,17 @@ export function playMove(pos: Shogi, md: MoveOrDrop): Shogi {
   return next
 }
 
-// ---- 描画座標（先手を下に固定した表示） ----
-// shogiops のマス番号は「筋(0始まり) + 16 × 段(0始まり)」。筋0 = 1筋（画面右端）、
-// 段0 = 一段目（画面最上段）なので、左上原点の col/row とは筋が反転する。
+// ---- 描画座標 ----
+// shogiops のマス番号は「筋(0始まり) + 16 × 段(0始まり)」。
+// 先手視点（先手が手前）: 筋0 = 1筋が画面右端、段0 = 一段目が最上段。
+// 後手視点は 180 度回転した配置になる。
 
-export function squareAt(col: number, row: number): Square {
-  return 8 - col + 16 * row
+export function squareAt(
+  col: number,
+  row: number,
+  orientation: Color = 'sente',
+): Square {
+  return orientation === 'sente' ? 8 - col + 16 * row : col + 16 * (8 - row)
 }
 
 export function boardCol(square: Square): number {
